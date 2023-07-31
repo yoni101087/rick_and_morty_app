@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "rick-and-morty-app.fullname" . }}
+  name: {{ include "name" . }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "rick-and-morty-app.name" . }}
+      app: {{ include "name" . }}
       release: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ include "rick-and-morty-app.name" . }}
+        app: {{ include "name" . }}
         release: {{ .Release.Name }}
     spec:
       containers:
