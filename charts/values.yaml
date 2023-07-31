@@ -1,0 +1,14 @@
+replicaCount: 1
+image:
+  repository: rick_and_morty_app
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  port: 80
+
+ingress:
+  enabled: true
+  annotations: {}
+
