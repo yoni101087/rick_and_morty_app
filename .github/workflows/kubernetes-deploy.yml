@@ -18,8 +18,8 @@ jobs:
           sudo microk8s.start
 
     env:
-      application: "rick_and_morty_app"   
-      namespace: "default"
+      application: rick_and_morty_app
+      namespace: default
 
   deploy-app:
     needs: setup-k8s-cluster
