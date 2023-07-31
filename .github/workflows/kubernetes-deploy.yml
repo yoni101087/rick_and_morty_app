@@ -18,8 +18,8 @@ jobs:
           sudo microk8s.start
 
     env:
-      application: rick_and_morty_app
-      namespace: default
+      APPLICATION: rick_and_morty_app
+      NAMESPACE: default
 
   deploy-app:
     needs: setup-k8s-cluster
@@ -31,17 +31,17 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           # Example: Build and push the Docker image
-          docker build -t ${{ env.application }} .
+          docker build -t ${{ env.APPLICATION }} .
           docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
-          docker tag ${{ env.application }} ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.application }}:latest
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.application }}:latest
+          docker tag ${{ env.APPLICATION }} ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.APPLICATION }}:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.APPLICATION }}:latest
 
       - name: Deploy to Kubernetes with helm
         # Add steps to deploy the application to the Kubernetes cluster
         run: |
-          helm upgrade ${{ env.application }} ./ \
+          helm upgrade ${{ env.APPLICATION }} ./ \
           --install \
-          --namespace ${{ env.namespace }}
+          --namespace ${{ env.NAMESPACE }}
           
 
   test-app:
