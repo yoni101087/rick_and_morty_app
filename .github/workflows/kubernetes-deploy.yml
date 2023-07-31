@@ -31,17 +31,17 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           # Example: Build and push the Docker image
-          docker build -t ${{ env.APPLICATION }} .
+          docker build -t $APPLICATION .
           docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
-          docker tag ${{ env.APPLICATION }} ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.APPLICATION }}:latest
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.APPLICATION }}:latest
+          docker tag $APPLICATION ${{ secrets.DOCKERHUB_USERNAME }}/$APPLICATION:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/$APPLICATION:latest
 
       - name: Deploy to Kubernetes with helm
         # Add steps to deploy the application to the Kubernetes cluster
         run: |
-          helm upgrade ${{ env.APPLICATION }} ./ \
+          helm upgrade $APPLICATION ./ \
           --install \
-          --namespace ${{ env.NAMESPACE }}
+          --namespace $NAMESPACE
           
 
   test-app:
