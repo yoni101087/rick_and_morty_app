@@ -10,7 +10,24 @@ This is a simple Flask app that queries the "Rick and Morty" API and returns cha
 - Kubernetes (Kind or Minikube) installed and running
 - Helm installed (https://helm.sh/docs/intro/install/)
 
-### Steps
+### Dockerized App ##
+To run the app as docker container execute the following commands: <br>
+# Build the Docker image <br>
+docker build -t rick_and_morty_app .
+
+# Run the Docker container <br>
+docker run -p 5000:5000 rick_and_morty_app
+
+### kubernetes ###
+To deploy the app manually run: 
+
+helm upgrade rick-and-morty-app ./charts \
+          --install \
+          --namespace default
+
+
+
+### Workflow Steps
 
 1/ Install k8s cluster <br>
 2/ set the runner <br>
