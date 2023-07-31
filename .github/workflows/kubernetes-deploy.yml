@@ -1,3 +1,4 @@
+
 name: Kubernetes Deployment Workflow
 
 on:
@@ -11,6 +12,14 @@ jobs:
     steps:
       - name: Set up Kubernetes cluster
         # Add steps to set up MicroK8s or any other Kubernetes cluster on the runner
+        run: |
+          # Example: Install MicroK8s
+          sudo snap install microk8s --classic
+          sudo microk8s.start
+
+      env:
+      application: "rick_and_morty_app"   
+      namespace: "default"
 
   deploy-app:
     needs: setup-k8s-cluster
@@ -19,4 +28,32 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
+      - name: Build and Push Docker Image
+        run: |
+          # Example: Build and push the Docker image
+          docker build -t "$application" .
+          docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
+          docker tag "$application" ${{ secrets.DOCKERHUB_USERNAME }}/"$application":latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/"$application":latest
+
+      - name: Deploy to Kubernetes with helm
+        # Add steps to deploy the application to the Kubernetes cluster
+        run: |
+          helm upgrade "$application" ./ \
+          --install \
+          --namespace "$namespace"
+          
+
+  test-app:
+    needs: deploy-app
+    runs-on: self-hosted   # Specify the runner label for your self-hosted runner
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Run Tests
+        # Add steps to run tests against your application endpoints
+        run: |
+          # Example: Run tests using a test framework or curl commands
+          curl http://localhost/healthcheck
 
