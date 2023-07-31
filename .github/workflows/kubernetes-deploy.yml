@@ -41,7 +41,7 @@ jobs:
       - name: Deploy to Kubernetes with helm
         # Add steps to deploy the application to the Kubernetes cluster
         run: |
-          helm upgrade rick-and-morty-app/charts ./ \
+          helm upgrade rick-and-morty-app ./charts \
           --install \
           --namespace default
           
