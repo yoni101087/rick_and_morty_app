@@ -33,15 +33,15 @@ jobs:
           # Example: Build and push the Docker image
           docker build -t "$application" .
           docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
-          docker tag "$application" ${{ secrets.DOCKERHUB_USERNAME }}/"$application":latest
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/"$application":latest
+          docker tag "$application" ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.application }}:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.application }}:latest
 
       - name: Deploy to Kubernetes with helm
         # Add steps to deploy the application to the Kubernetes cluster
         run: |
-          helm upgrade "$application" ./ \
+          helm upgrade ${{ env.application }} ./ \
           --install \
-          --namespace "$namespace"
+          --namespace ${{ env.namespace }}
           
 
   test-app:
