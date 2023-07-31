@@ -3,7 +3,7 @@ name: Kubernetes Deployment Workflow
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   setup-k8s-cluster:
