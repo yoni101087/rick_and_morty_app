@@ -41,6 +41,7 @@ jobs:
       - name: Deploy to Kubernetes with helm
         # Add steps to deploy the application to the Kubernetes cluster
         run: |
+          pwd
           helm upgrade rick-and-morty-app ./ \
           --install \
           --namespace default
