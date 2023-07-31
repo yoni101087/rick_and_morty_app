@@ -12,13 +12,13 @@ This is a simple Flask app that queries the "Rick and Morty" API and returns cha
 
 ### Steps
 
-1/ Install k8s cluster
-2/ set the runner
-3/ clone the repo
-4/ Log in to Docker Hub
-5/ Build the Docker Image
-6/ Push the Docker Image
-7/ Deploy to Kubernetes with helm
+1/ Install k8s cluster <br>
+2/ set the runner <br>
+3/ clone the repo <br> 
+4/ Log in to Docker Hub <br>
+5/ Build the Docker Image <br>
+6/ Push the Docker Image <br>
+7/ Deploy to Kubernetes with helm <br>
 8/ test-app
 
 
