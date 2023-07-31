@@ -40,8 +40,8 @@ helm upgrade rick-and-morty-app ./charts \
 
 
 API Endpoints
-Health Check: http://<minikube-ip>/healthcheck
-Fetch all characters: http://<minikube-ip>/characters
+Health Check: http://localhost/healthcheck
+Fetch all characters: http://localhost/characters
 
 With these steps, you can now deploy the Helm chart to Kubernetes using Kind/Minikube and access the API endpoints to fetch the data.
 
