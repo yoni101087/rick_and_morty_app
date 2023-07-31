@@ -1,0 +1,36 @@
+name: Kubernetes Deployment Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  setup-k8s-cluster:
+    runs-on: self-hosted   # Specify the runner label for your self-hosted runner
+    steps:
+      - name: Set up Kubernetes cluster
+        # Add steps to set up MicroK8s or any other Kubernetes cluster on the runner
+
+  deploy-app:
+    needs: setup-k8s-cluster
+    runs-on: self-hosted   # Specify the runner label for your self-hosted runner
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Build and Push Docker Image
+        # Add steps to build the Docker image and push it to Docker Hub or a container registry
+
+      - name: Deploy to Kubernetes
+        # Add steps to deploy the application to the Kubernetes cluster
+
+  test-app:
+    needs: deploy-app
+    runs-on: self-hosted   # Specify the runner label for your self-hosted runner
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Run Tests
+        # Add steps to run tests against your application endpoints
