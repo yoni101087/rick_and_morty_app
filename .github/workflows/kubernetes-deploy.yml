@@ -31,9 +31,9 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           # Example: Build and push the Docker image
-          docker build -t "$application" .
+          docker build -t ${{ env.application }} .
           docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
-          docker tag "$application" ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.application }}:latest
+          docker tag ${{ env.application }} ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.application }}:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.application }}:latest
 
       - name: Deploy to Kubernetes with helm
