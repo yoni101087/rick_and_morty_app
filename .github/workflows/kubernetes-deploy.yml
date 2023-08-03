@@ -60,3 +60,26 @@ jobs:
           # Example: Run tests using a test framework or curl commands
           curl http://localhost/healthcheck
 
+  save-artifact:
+    needs: test-app
+    runs-on: self-hosted
+    steps:
+      - name: Package Helm chart
+        run: |
+          helm package .
+
+      - name: Upload Helm chart artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: my-release-${{ github.sha }}
+          path: ./rick_and_morty_app.tgz
+
+      - name: Upload artifact to Nexus
+        env:
+          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+          NEXUS_URL: 'http://172.16.1.109:8081'  # Replace with your Nexus URL
+          NEXUS_REPOSITORY: 'rick_and_morty_app'  # Replace with the repository ID in Nexus
+        run: |
+          curl -v -u $NEXUS_USERNAME:$NEXUS_PASSWORD --upload-file ./rick_and_morty_app.tgz $NEXUS_URL/repository/$NEXUS_REPOSITORY/my-release/${{ github.sha }}/my-release-${{ github.sha }}.tgz
+
