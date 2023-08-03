@@ -72,7 +72,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: my-release-${{ github.sha }}
-          path: ./rick_and_morty_app.tgz
+          path: ./rick-and-morty-app-0.1.0.tgz
 
       - name: Upload artifact to Nexus
         env:
