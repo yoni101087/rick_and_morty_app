@@ -15,6 +15,6 @@ spec:
               service:
                 name: {{ include "name" . }}
                 port:
-                  number: 80
+                  number: 8081
 {{- end }}
 
