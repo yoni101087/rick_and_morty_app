@@ -58,7 +58,7 @@ jobs:
         # Add steps to run tests against your application endpoints
         run: |
           # Example: Run tests using a test framework or curl commands
-          curl http://localhost/healthcheck
+          curl http://app.local/healthcheck
 
   save-artifact:
     needs: test-app
