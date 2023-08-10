@@ -74,33 +74,7 @@ jobs:
           name: my-release-${{ github.sha }}
           path: ./rick-and-morty-app-0.1.0.tgz
           
-      - name: Authenticate with Nexus and create repository
-        env:
-          NEXUS_URL: 'http://nexus.local'  # Replace with your Nexus URL
-          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
-          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
-        run: |
-          SESSION_TOKEN=$(curl -s -X POST "$NEXUS_URL/service/rapture/session" -d "username=$NEXUS_USERNAME&password=$NEXUS_PASSWORD" | jq -r .data.token)
-          echo "SESSION_TOKEN: $SESSION_TOKEN"
 
-          # Additional verification steps
-          if [ -z "$SESSION_TOKEN" ]; then
-          echo "Session token not received or is empty."
-          exit 1
-          fi
-
-          # Your repository creation request here
-          curl -X POST "$NEXUS_URL/service/rest/beta/repositories/helm/hosted" \
-            -H "Authorization: Bearer $SESSION_TOKEN" \
-            -H "Content-Type: application/json" \
-            -d '{
-              "name": "rick_and_morty_app",
-              "online": true,
-              "storage": {
-                "blobStoreName": "default",
-                "strictContentTypeValidation": true
-              }
-            }'
 
       - name: Upload artifact to Nexus
         env:
