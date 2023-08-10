@@ -8,7 +8,6 @@ spec:
     release: {{ .Release.Name }}
   ports:
     - protocol: TCP
-      port: 8080
+      port: 9082
       targetPort: 5000
   type: {{ .Values.service.type }}
-
