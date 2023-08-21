@@ -56,8 +56,7 @@ jobs:
             --path $REPO_PATH \
             --dest-server https://kubernetes.default.svc \
             --dest-namespace default \
-            --revision argocd  # Change this to your desired branch or revision \
-            --grpc-web
+            --revision argocd  # Change this to your desired branch or revision 
 
           argocd app set rick-and-morty-app \
             --values image.tag=$IMAGE_TAG
