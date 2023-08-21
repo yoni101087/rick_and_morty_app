@@ -4,7 +4,7 @@ name: Kubernetes Deployment Workflow
 on:
   push:
     branches:
-      - master
+      - argocd
 
 jobs:
   setup-k8s-cluster:
@@ -39,12 +39,28 @@ jobs:
       - name: Push the Docker Image
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/rick_and_morty_app:latest
 
-      - name: Deploy to Kubernetes with helm
-        # Add steps to deploy the application to the Kubernetes cluster
+      - name: Log in to ArgoCD
+        env:
+          ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}
+          ARGOCD_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
+        run: argocd login $ARGOCD_SERVER --insecure --username admin --password $ARGOCD_TOKEN
+
+      - name: Deploy Application using ArgoCD
+        env:
+          REPO_PATH: ./charts  # Change this to your application's path
+          APP_NAMESPACE: default
+          IMAGE_TAG: latest  # You can set this to your desired tag
         run: |
-          helm upgrade rick-and-morty-app ./charts \
-          --install \
-          --namespace default
+          argocd app create rick-and-morty-app \
+            --repo https://github.com/yoni101087/rick_and_morty_app.git \
+            --path $REPO_PATH \
+            --dest-server https://kubernetes.default.svc \
+            --dest-namespace default \
+            --revision argocd  # Change this to your desired branch or revision
+
+          argocd app set rick-and-morty-app \
+            --values image.tag=$IMAGE_TAG
+          argocd app sync rick-and-morty-app
           
 
   test-app:
