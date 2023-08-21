@@ -6,6 +6,7 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: "nginx"
 spec:
+  ingressClassName: nginx
   rules:
     - host: app.local
       http:
@@ -17,7 +18,8 @@ spec:
                 name: {{ include "name" . }}
                 port:
                   number: 9082
-
-
-
+status:
+  loadBalancer:
+    ingress:
+      - ip: 127.0.0.1
 {{- end }}
