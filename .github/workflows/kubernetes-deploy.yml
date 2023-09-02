@@ -67,6 +67,10 @@ jobs:
             --dest-server https://kubernetes.default.svc \
             --dest-namespace default \
             --revision argocd  # Change this to your desired branch or revision 
+
+      - name: Trigger Synchronization
+        run: |
+          argocd app sync rick_and_morty_app
           
 
   test-app:
