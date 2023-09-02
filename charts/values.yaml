@@ -13,3 +13,13 @@ ingress:
   enabled: true
   annotations: {}
 
+argocdApplication:
+  name: counterservice
+  project: default
+  source:
+    repoURL: https://github.com/yoni101087/rick_and_morty_app.git
+    targetRevision: argocd
+    path: ./charts
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
