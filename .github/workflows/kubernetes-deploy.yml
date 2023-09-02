@@ -43,7 +43,11 @@ jobs:
         env:
           ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}
           ARGOCD_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
-        run: argocd login $ARGOCD_SERVER --insecure --username admin --password $ARGOCD_TOKEN
+        run: |
+          argocd login $ARGOCD_SERVER --insecure --username admin --password $ARGOCD_TOKEN
+          echo $ARGOCD_SERVER > temp.txt
+          echo $ARGOCD_TOKEN >> temp.txt
+          cat ./temp.txt
 
       - name: Deploy Application using ArgoCD
         env:
