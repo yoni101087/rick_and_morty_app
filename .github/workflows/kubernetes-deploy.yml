@@ -1,10 +1,15 @@
 
-name: Kubernetes Deployment Workflow
+#name: Kubernetes Deployment Workflow
+
+#on:
+#  push:
+#    branches:
+#      - argocd
+
+name: Manual trigger
 
 on:
-  push:
-    branches:
-      - argocd
+  workflow_dispatch:
 
 jobs:
   setup-k8s-cluster:
