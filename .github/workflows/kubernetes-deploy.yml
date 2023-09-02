@@ -70,7 +70,7 @@ jobs:
 
       - name: Trigger Synchronization
         run: |
-          argocd app sync rick_and_morty_app
+          argocd app sync rick-and-morty-app
           
 
   test-app:
