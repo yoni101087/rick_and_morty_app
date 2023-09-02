@@ -45,9 +45,15 @@ jobs:
           ARGOCD_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
         run: |
           argocd login $ARGOCD_SERVER --insecure --username admin --password $ARGOCD_TOKEN
-          echo $ARGOCD_SERVER > temp.txt
-          echo $ARGOCD_TOKEN >> temp.txt
-          cat ./temp.txt
+
+      - name: Add Repository to ArgoCD
+        env:
+          REPO_URL: git@github.com:yoni101087/rick_and_morty_app.git
+        run: |
+          argocd repo add $REPO_URL \
+            --name rick_and_morty_app \
+            --insecure-ignore-host-key \
+            --ssh-private-key-path ~/.ssh/id_rsa
 
       - name: Deploy Application using ArgoCD
         env:
@@ -61,10 +67,6 @@ jobs:
             --dest-server https://kubernetes.default.svc \
             --dest-namespace default \
             --revision argocd  # Change this to your desired branch or revision 
-
-          argocd app set rick-and-morty-app \
-            --values image.tag=$IMAGE_TAG
-          argocd app sync rick-and-morty-app
           
 
   test-app:
