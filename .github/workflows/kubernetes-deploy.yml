@@ -28,12 +28,6 @@ jobs:
       - name: Set BuildKit as the Remote Builder
         run: echo "DOCKER_HOST=tcp://buildkit.buildkit.svc.cluster.local:1234" >> $GITHUB_ENV
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
-
       - name: Build and push Docker Image using MicroK8s BuildKit
         uses: docker/build-push-action@v5
         with:
@@ -44,6 +38,9 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/rick_and_morty_app:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/rick_and_morty_app:${{ github.sha }}
           platforms: linux/amd64,linux/arm64
+          secrets: |
+            "registry-username=${{ secrets.DOCKERHUB_USERNAME }}"
+            "registry-password=${{ secrets.DOCKERHUB_PASSWORD }}"
 
   deploy-app:
     needs: build-and-push
