@@ -25,31 +25,36 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
-      - name: Wait for BuildKit Pod to be Ready
+      - name: Get BuildKit Pod Name
         run: |
-          while [[ -z "$(kubectl get pods -n buildkit -l app.kubernetes.io/instance=buildkit --field-selector=status.phase=Running -o jsonpath='{.items[0].metadata.name}')" ]]; do
-            echo "Waiting for BuildKit to be ready..."
-            sleep 5
-          done
+          POD_NAME=$(kubectl get pods -n buildkit -l app.kubernetes.io/instance=buildkit --field-selector=status.phase=Running -o jsonpath='{.items[0].metadata.name}')
+          if [[ -z "$POD_NAME" ]]; then
+            echo "Error: No running BuildKit pod found!"
+            kubectl get pods -n buildkit
+            exit 1
+          fi
+          echo "BuildKit Pod found: $POD_NAME"
+          echo "POD_NAME=$POD_NAME" >> $GITHUB_ENV
 
-      - name: Set BuildKit as the Remote Builder
-        run: echo "DOCKER_HOST=tcp://buildkit.buildkit.svc.cluster.local:1234" >> $GITHUB_ENV
+      - name: Copy Docker Context to BuildKit Pod
+        run: |
+          kubectl cp . "$POD_NAME:/workspace" -n buildkit
+          echo "Copied project files to /workspace inside BuildKit pod"
 
       - name: Build and push Docker Image using MicroK8s BuildKit
         run: |
-          POD_NAME=$(kubectl get pods -n buildkit -l app.kubernetes.io/instance=buildkit --field-selector=status.phase=Running -o jsonpath='{.items[0].metadata.name}')
           echo "Using BuildKit Pod: $POD_NAME"
-
-          kubectl exec -n buildkit -it $POD_NAME -- \
+          kubectl exec -n buildkit -it "$POD_NAME" -- \
             buildctl build \
               --frontend=dockerfile.v0 \
-              --local context=. \
-              --local dockerfile=. \
+              --local context=/workspace \
+              --local dockerfile=/workspace \
               --output type=image,name=${{ secrets.DOCKERHUB_USERNAME }}/rick_and_morty_app:latest,push=true \
               --output type=image,name=${{ secrets.DOCKERHUB_USERNAME }}/rick_and_morty_app:${{ github.sha }},push=true \
               --export-cache type=inline \
               --import-cache type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/rick_and_morty_app:cache \
               --progress=plain
+
 
   deploy-app:
     needs: build-and-push
