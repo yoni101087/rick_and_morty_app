@@ -25,12 +25,22 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
+      - name: Wait for BuildKit Pod to be Ready
+        run: |
+          while [[ -z "$(kubectl get pods -n buildkit -l app.kubernetes.io/name=buildkit --field-selector=status.phase=Running -o jsonpath='{.items[0].metadata.name}')" ]]; do
+            echo "Waiting for BuildKit to be ready..."
+            sleep 5
+          done
+
       - name: Set BuildKit as the Remote Builder
         run: echo "DOCKER_HOST=tcp://buildkit.buildkit.svc.cluster.local:1234" >> $GITHUB_ENV
 
       - name: Build and push Docker Image using MicroK8s BuildKit
         run: |
-          kubectl exec -n buildkit -it $(kubectl get pod -n buildkit -l app.kubernetes.io/name=buildkit -o jsonpath='{.items[0].metadata.name}') -- \
+          POD_NAME=$(kubectl get pods -n buildkit -l app.kubernetes.io/name=buildkit --field-selector=status.phase=Running -o jsonpath='{.items[0].metadata.name}')
+          echo "Using BuildKit Pod: $POD_NAME"
+
+          kubectl exec -n buildkit -it $POD_NAME -- \
             buildctl build \
               --frontend=dockerfile.v0 \
               --local context=. \
