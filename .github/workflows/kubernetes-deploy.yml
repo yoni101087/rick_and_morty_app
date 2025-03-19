@@ -37,7 +37,7 @@ jobs:
 
       - name: Build and push Docker Image using MicroK8s BuildKit
         run: |
-          POD_NAME=$(kubectl get pods -n buildkit -l app.kubernetes.io/name=buildkit --field-selector=status.phase=Running -o jsonpath='{.items[0].metadata.name}')
+          POD_NAME=$(kubectl get pods -n buildkit -l app.kubernetes.io/instance=buildkit --field-selector=status.phase=Running -o jsonpath='{.items[0].metadata.name}')
           echo "Using BuildKit Pod: $POD_NAME"
 
           kubectl exec -n buildkit -it $POD_NAME -- \
