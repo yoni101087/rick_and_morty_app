@@ -27,7 +27,7 @@ jobs:
 
       - name: Wait for BuildKit Pod to be Ready
         run: |
-          while [[ -z "$(kubectl get pods -n buildkit -l app.kubernetes.io/name=buildkit --field-selector=status.phase=Running -o jsonpath='{.items[0].metadata.name}')" ]]; do
+          while [[ -z "$(kubectl get pods -n buildkit -l app.kubernetes.io/instance=buildkit --field-selector=status.phase=Running -o jsonpath='{.items[0].metadata.name}')" ]]; do
             echo "Waiting for BuildKit to be ready..."
             sleep 5
           done
