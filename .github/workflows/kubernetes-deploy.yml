@@ -29,18 +29,17 @@ jobs:
         run: echo "DOCKER_HOST=tcp://buildkit.buildkit.svc.cluster.local:1234" >> $GITHUB_ENV
 
       - name: Build and push Docker Image using MicroK8s BuildKit
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: Dockerfile
-          push: true
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/rick_and_morty_app:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/rick_and_morty_app:${{ github.sha }}
-          platforms: linux/amd64,linux/arm64
-          secrets: |
-            "registry-username=${{ secrets.DOCKERHUB_USERNAME }}"
-            "registry-password=${{ secrets.DOCKERHUB_PASSWORD }}"
+        run: |
+          kubectl exec -n buildkit -it $(kubectl get pod -n buildkit -l app.kubernetes.io/name=buildkit -o jsonpath='{.items[0].metadata.name}') -- \
+            buildctl build \
+              --frontend=dockerfile.v0 \
+              --local context=. \
+              --local dockerfile=. \
+              --output type=image,name=${{ secrets.DOCKERHUB_USERNAME }}/rick_and_morty_app:latest,push=true \
+              --output type=image,name=${{ secrets.DOCKERHUB_USERNAME }}/rick_and_morty_app:${{ github.sha }},push=true \
+              --export-cache type=inline \
+              --import-cache type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/rick_and_morty_app:cache \
+              --progress=plain
 
   deploy-app:
     needs: build-and-push
