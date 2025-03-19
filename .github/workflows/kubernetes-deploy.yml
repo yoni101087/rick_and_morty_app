@@ -25,6 +25,9 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
+      - name: Get Short SHA
+        run: echo "SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
+
       - name: Get BuildKit Pod Name
         run: |
           POD_NAME=$(kubectl get pods -n buildkit -l app.kubernetes.io/instance=buildkit --field-selector=status.phase=Running -o jsonpath='{.items[0].metadata.name}')
@@ -50,10 +53,11 @@ jobs:
               --local context=/workspace \
               --local dockerfile=/workspace \
               --output type=image,name=${{ secrets.DOCKERHUB_USERNAME }}/rick_and_morty_app:latest,push=true \
-              --output type=image,name=${{ secrets.DOCKERHUB_USERNAME }}/rick_and_morty_app:${{ github.sha }},push=true \
+              --output type=image,name=${{ secrets.DOCKERHUB_USERNAME }}/rick_and_morty_app:${{ env.SHORT_SHA }},push=true \
               --export-cache type=inline \
               --import-cache type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/rick_and_morty_app:cache \
               --progress=plain
+
 
 
   deploy-app:
