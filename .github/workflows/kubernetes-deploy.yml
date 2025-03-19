@@ -25,10 +25,6 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
-      - name: Wait for BuildKit to be Ready
-        run: |
-          kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=buildkit --namespace buildkit --timeout=120s
-
       - name: Set BuildKit as the Remote Builder
         run: echo "DOCKER_HOST=tcp://buildkit.buildkit.svc.cluster.local:1234" >> $GITHUB_ENV
 
