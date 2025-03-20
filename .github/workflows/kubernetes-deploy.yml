@@ -44,6 +44,11 @@ jobs:
           kubectl cp . "$POD_NAME:/workspace" -n buildkit
           echo "Copied project files to /workspace inside BuildKit pod"
 
+      - name: Pass Docker Hub Credentials to BuildKit
+        run: |
+          echo -n "${{ secrets.DOCKERHUB_PASSWORD }}" | kubectl exec -n buildkit -i "$POD_NAME" -- buildctl --addr tcp://buildkit.buildkit.svc.cluster.local:1234 \
+            registry-login --username "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
       - name: Build and push Docker Image using MicroK8s BuildKit
         run: |
           echo "Using BuildKit Pod: $POD_NAME"
@@ -53,10 +58,11 @@ jobs:
               --local context=/workspace \
               --local dockerfile=/workspace \
               --output type=image,name=docker.io/yoni101087/rick_and_morty_app:latest,push=true \
-              --output type=image,name=docker.io/yoni101087/rick_and_morty_app:${{ env.SHORT_SHA }},push=true \
+              --output type=image,name=docker.io/yoni101087/${{ secrets.DOCKERHUB_USERNAME }}/rick_and_morty_app:${{ env.SHORT_SHA }},push=true \
               --export-cache type=inline \
               --import-cache type=registry,ref=docker.io/yoni101087/rick_and_morty_app:cache \
               --progress=plain
+
 
 
 
